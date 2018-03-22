@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Gold Coast Amenities</title>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
+    <link rel="stylesheet" href="css/stylesheet.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js"></script>
+
+    <!--
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script> -->
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="venues.js"></script>
+    <script src="fountain.js"></script>
+<script src="bikeracks.js"></script>
+<script src="showers.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.3/proj4-src.js" integrity="sha256-dTyQwAdf7QHJgDE+fdB9f29w5raa/vyUGq5i+5Fs9qg=" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    <!-- Navbar goes here -->
+    <div class="wrapper">
+
+        <div class=""> 
+            <ul id="slide-out" class="side-nav fixed">
+                <div class="card">
+                    <div class="card-image">
+                        <div id="pano" style="width: 100%; height: 200px;"></div>
+                    </div>
+                    <div class="card-content">
+                        <p>Welcome to the 2018 Commonwealth Games being held on the Gold Coast!</p>
+                         
+                    </div>
+                    <div class="card-action">
+                       <p>Use this tool to find free public amenities</p>
+                    </div>
+                </div>
+            </ul>
+
+            <nav class="nav-extended light-blue lighten-1">
+                <div class="nav-wrapper">
+                    <a href="#" class="brand-logo">Gold Coast Amenities</a>
+                    <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+                </div>
+                <div class="nav-content">
+                    <!-- Modal Trigger -->
+                    <a class="waves-effect waves-light btn modal-trigger show-on-medium-and-down hide-on-med-and-up" href="#modal1">Filters</a>
+
+                    <!-- Modal Structure -->
+                    <div id="modal1" class="modal bottom-sheet">
+                        <div class="modal-content">
+                            <div class="row filter-row">
+                                <div class="col s12">
+                                    <input type="checkbox" class="filter-cb" id="fountain2" value="fountain" checked="checked"/>
+                                    <label for="fountain">Water Fountains</label>
+                                </div>
+                            </div>
+                            <div class="row filter-row">
+                                <div class="col s12">
+                                    <input type="checkbox" class="filter-cb" id="shower2" value="shower" checked="checked"/>
+                                    <label for="shower">Showers</label>
+                                </div>
+                            </div>
+                            <div class="row filter-row">
+                                <div class="col s12">
+                                    <input type="checkbox" class="filter-cb" id="wifi2" value="wifi" checked="checked" />
+                                    <label for="wifi">Wi-fi</label>
+                                </div>
+                            </div>
+                            <div class="row filter-row">
+                                <div class="col s12">
+                                    <input type="checkbox" class="filter-cb" id="bike2" value="bike" checked="checked"/>
+                                    <label for="bike">Bike Racks</label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row filter-row hide-on-med-and-down" id="fullscreen-filter">
+                        <div class="col s3">
+                            <input onchange="clearFountains(fountainMarks);" type="checkbox" class="filter-cb" id="fountain" value="fountain" checked="checked"/>
+                            <label for="fountain">Water Fountains</label>
+                        </div>
+                        <div class="col s2">
+                            <input onchange="clearShowers(showerMarks);" class="filter-cb" value="shower" type="checkbox" id="shower" checked="checked"/>
+                            <label for="shower">Showers</label>
+                        </div>
+                        <div class="col s2">
+                            <input type="checkbox" class="filter-cb" id="wifi" value="wifi" checked="checked"/>
+                            <label for="wifi">Wi-fi</label>
+                        </div>
+                        <div class="col s3">
+                            <input onchange="clearBikes(bikeMarks);" class="filter-cb" value="bike" type="checkbox" id="bike" checked="checked"/>
+                            <label for="bike">Bike Racks</label>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Page Layout here -->
+    <script>
+        var fountainMarks = [];
+        var bikeMarks = [];
+        var showerMarks = [];
+        var venueMarks = [];
+
+
+        var map;
+        var panorama;
+
+
+
+        function clearBikes(dataSource) {
+            
+                if (document.getElementById('bike').checked) {
+                    addMarkers(bikes, "bike.png", bikeMarks);
+                } else {
+                    for (var i = 0; i < dataSource.length; i++) {
+                        dataSource[i].setMap(null); 
+                    }
+            }
+        }
+
+
+        function clearShowers(dataSource) {
+    
+        if (document.getElementById('shower').checked) {
+            addMarkers(showers, "shower.png", showerMarks);
+        } else {
+            for (var i = 0; i < dataSource.length; i++) {
+                dataSource[i].setMap(null); 
+            }
+        }
+}
+
+function clearFountains(dataSource) {
+    
+        if (document.getElementById('fountain').checked) {
+            addMarkers(fountains, "water.png", fountainMarks);
+        } else {
+            for (var i = 0; i < dataSource.length; i++) {
+                dataSource[i].setMap(null); 
+            }
+        }
+}
+
+
+
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {
+                    lat: -28.0172605,
+                    lng: 153.4256987
+                },
+                zoom: 11
+            });
+
+
+
+            // Street view
+            var fenway = {lat: 42.345573, lng: -71.098326};
+            
+            panorama = new google.maps.StreetViewPanorama(
+                    document.getElementById('pano'), {
+                      position: fenway,
+                    });
+                map.setStreetView(panorama);
+            //end street view
+
+             // Add markers for fountains
+            addMarkers(fountains, "water.png", fountainMarks);
+            // Add markers for bikeracks
+            addMarkers(bikes, "bike.png", bikeMarks);
+            // Add markers for showers
+            addMarkers(showers, "shower.png", showerMarks);
+
+             var imagePath = 'http://m.schuepfen.ch/icons/helveticons/black/60/Pin-location.png';
+
+             for (var i = 0, length = venues.length; i < length; i++) {
+                 var data = venues[i],
+                     latLng = new google.maps.LatLng(data.lat, data.lng);
+ 
+                 // Creating a marker and putting it on the map
+                 var marker = new google.maps.Marker({
+                     position: latLng,
+                     map: map,
+                     icon: imagePath,
+                     title: data.name
+                 });
+             }            
+        }
+
+
+        function addMarkers(markertype, icon, dataSource){
+
+            // Add markers
+            for (var i = 0; i < markertype.length; i++) {
+
+
+                var utm = "+proj=utm +zone=56J +south +units=m";
+                var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
+                var coords = proj4(utm,wgs84,[markertype[i].POINT_X, markertype[i].POINT_Y]);
+
+                var markerloc = {lat: coords[1], lng: coords[0]};
+                var image = icon;
+
+
+                var marker = new google.maps.Marker({
+                position: markerloc,
+                map: map,
+                title: coords[1] + "," + coords[0], 
+                icon: image,
+                });
+                dataSource.push(marker);
+
+
+                // Add street view change listener to each marker
+                marker.addListener('click', function() {
+                    map.setZoom(15);
+                    map.setCenter(this.position);
+
+                var markTitle = this.position.toString().replace('(','').replace(')','').split(','); 
+                
+                //console.log(this.position.toString());
+                var astorPlace = new google.maps.LatLng(Number(markTitle[0]), markTitle[1]);
+                var webService = new google.maps.StreetViewService(); 
+                var checkaround = 100;
+                webService.getPanoramaByLocation(astorPlace,checkaround ,checkNearestStreetView);
+
+                function checkNearestStreetView(panoData){
+                    if(panoData.location.latLng) {
+                        panorama.setPosition(panoData.location.latLng);
+                        map.setStreetView(panorama);
+                        //console.log(document.getElementById('fullscreen-filter').style.display.toString());
+                        console.log($(window).width());
+                        if ($(window).width() < 768) {
+                            //console.log('hello');
+                            $('.button-collapse').sideNav('show');    
+                        }
+                        
+                    }
+                }
+            });
+        }
+}
+
+    </script>
+ <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBldkmSwt8QVo4YgQLyyTjAGYd_ii6cdEk&callback=initMap">
+    </script>
+
+    <!--- MAP DIV -->
+    <div id="map"></div>
+
+    <script>
+        $(document).ready(function() {
+            $(".filter-cb").change(function() {
+                var val = $(this).val();
+              if( $(this).is(":checked") ) {
+
+                $(":checkbox[value='"+val+"']").attr("checked", true);
+              }
+                else {
+                    $(":checkbox[value='"+val+"']").attr("checked", false);
+                }
+            });
+            $(".button-collapse").sideNav();
+            $('.modal').modal({
+                dismissible: true, // Modal can be dismissed by clicking outside of the modal
+                opacity: .5, // Opacity of modal background
+                inDuration: 300, // Transition in duration
+                outDuration: 200, // Transition out duration
+                startingTop: '1%', // Starting top style attribute
+                endingTop: '1%', // Ending top style attribute
+                ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
+
+                },
+                complete: function() {
+                } // Callback for Modal close
+            });
+
+        });
+
+    </script>
+
+    <!--Import jQuery before materialize.js-->
+</body>
+
+</html>
